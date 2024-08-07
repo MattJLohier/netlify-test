@@ -12,6 +12,7 @@ function App() {
   const [savedArticles, setSavedArticles] = useState([]);
   const [activeTab, setActiveTab] = useState('articles');
   const [summarizedArticle, setSummarizedArticle] = useState(null);
+  const [articleValidity, setArticleValidity] = useState({});
 
   useEffect(() => {
     netlifyIdentity.on('login', (user) => setUser(user));
@@ -36,6 +37,28 @@ function App() {
     loadArticles();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 'summarize') {
+      checkArticleValidity();
+    }
+  }, [activeTab]);
+
+  const checkArticleValidity = async () => {
+    const validity = {};
+    for (const article of savedArticles) {
+      try {
+        const response = await axios.post('/.netlify/functions/summarize', {
+          url: article.link,
+          action: 'check',
+        });
+        validity[article.title] = response.data.valid;
+      } catch (error) {
+        validity[article.title] = false;
+      }
+    }
+    setArticleValidity(validity);
+  };
+
   const saveOrUnsaveArticle = (article) => {
     if (savedArticles.some(saved => saved.title === article.title)) {
       setSavedArticles(savedArticles.filter(saved => saved.title !== article.title));
@@ -49,10 +72,11 @@ function App() {
   };
 
   const handleSummarize = async (article) => {
-    if (article.link === 'NA') return;
+    if (!articleValidity[article.title]) return;
     try {
       const response = await axios.post('/.netlify/functions/summarize', {
         url: article.link,
+        action: 'summarize',
       });
       setSummarizedArticle(response.data.summary);
     } catch (error) {
@@ -146,6 +170,7 @@ function App() {
                       <button
                         className="summarize-button"
                         onClick={() => handleSummarize(article)}
+                        disabled={!articleValidity[article.title]}
                       >
                         Summarize
                       </button>
