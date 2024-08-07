@@ -14,14 +14,6 @@ const isVideoPlatform = (url) => {
 exports.handler = async (event) => {
   const { url, action } = JSON.parse(event.body);
 
-  // Verify the URL is valid
-  if (!url || !/^https?:\/\/[^ "]+$/.test(url)) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid URL' }),
-    };
-  }
-
   // Check if the URL is from a video platform
   if (isVideoPlatform(url)) {
     return {
