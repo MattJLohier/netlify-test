@@ -1,7 +1,7 @@
 const OpenAI = require('openai');
 
 const client = new OpenAI({
-  api_key: OPENAI_API_KEY,
+  api_key: process.env.OPENAI_API_KEY,
 });
 
 exports.handler = async (event) => {
