@@ -13,6 +13,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('articles');
   const [summarizedArticle, setSummarizedArticle] = useState(null);
   const [articleValidity, setArticleValidity] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     netlifyIdentity.on('login', (user) => setUser(user));
@@ -38,6 +39,7 @@ function App() {
   }, []);
 
   const checkArticleValidity = useCallback(async () => {
+    setLoading(true);
     const validity = {};
     for (const article of savedArticles) {
       try {
@@ -51,6 +53,7 @@ function App() {
       }
     }
     setArticleValidity(validity);
+    setLoading(false);
   }, [savedArticles]);
 
   useEffect(() => {
@@ -90,6 +93,11 @@ function App() {
 
   return (
     <div className="App">
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+        </div>
+      )}
       <div className="sidebar">
         <img src={logo} alt="Logo" className="logo" />
         {user && (
@@ -100,7 +108,7 @@ function App() {
           </div>
         )}
       </div>
-      <div className="main-content">
+      <div className={`main-content ${loading ? 'loading' : ''}`}>
         <div className="nav">
           <button className={activeTab === 'articles' ? 'active' : ''} onClick={() => setActiveTab('articles')}>Articles</button>
           <button className={activeTab === 'saved' ? 'active' : ''} onClick={() => setActiveTab('saved')}>Saved</button>

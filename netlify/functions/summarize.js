@@ -7,7 +7,7 @@ const client = new OpenAI({
 });
 
 const isVideoPlatform = (url) => {
-  const videoPlatforms = ['youtube', 'vimeo', 'dailymotion'];
+  const videoPlatforms = ['youtube', 'youtu.be', 'vimeo', 'dailymotion'];
   return videoPlatforms.some(platform => url.includes(platform));
 };
 
