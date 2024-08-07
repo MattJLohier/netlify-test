@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import netlifyIdentity from './netlifyIdentity';
 import { fetchArticles } from './fetchArticles';
 import './App.css';
@@ -10,6 +11,7 @@ function App() {
   const [articleGroups, setArticleGroups] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
   const [activeTab, setActiveTab] = useState('articles');
+  const [summarizedArticle, setSummarizedArticle] = useState(null);
 
   useEffect(() => {
     netlifyIdentity.on('login', (user) => setUser(user));
@@ -46,6 +48,18 @@ function App() {
     netlifyIdentity.logout();
   };
 
+  const handleSummarize = async (article) => {
+    if (article.link === 'NA') return;
+    try {
+      const response = await axios.post('/.netlify/functions/summarize', {
+        url: article.link,
+      });
+      setSummarizedArticle(response.data.summary);
+    } catch (error) {
+      console.error('Failed to summarize the article:', error);
+    }
+  };
+
   if (!user) {
     return <LoginScreen />;
   }
@@ -57,7 +71,7 @@ function App() {
         {user && (
           <div className="user-info">
             Welcome, {user.user_metadata.full_name}
-            <br></br>
+            <br />
             <button className="logout-button" onClick={handleLogout}>Log Out</button>
           </div>
         )}
@@ -66,12 +80,13 @@ function App() {
         <div className="nav">
           <button className={activeTab === 'articles' ? 'active' : ''} onClick={() => setActiveTab('articles')}>Articles</button>
           <button className={activeTab === 'saved' ? 'active' : ''} onClick={() => setActiveTab('saved')}>Saved</button>
+          <button className={activeTab === 'summarize' ? 'active' : ''} onClick={() => setActiveTab('summarize')}>Summarize</button>
         </div>
 
         <div className="content">
           {activeTab === 'articles' && (
             <div>
-              <h1>Articles</h1>
+              <h1>Latest Articles</h1>
               {articleGroups.map((group, index) => (
                 <div key={index} className="article-group">
                   <h2>{group.group_title}</h2>
@@ -114,6 +129,40 @@ function App() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+          {activeTab === 'summarize' && (
+            <div>
+              <h1>Summarize Articles</h1>
+              {savedArticles.map((article, index) => (
+                <div key={index} className="article-group">
+                  <div className="article">
+                    <h3>{article.title}</h3>
+                    <p>{article.description}</p>
+                    <p><strong>Date:</strong> {article.date}</p>
+                    <p><strong>Source:</strong> {article.source_name}</p>
+                    {article.link !== 'NA' && <a className="article-link" href={article.link} target="_blank" rel="noopener noreferrer">Read more</a>}
+                    {article.link !== 'NA' ? (
+                      <button
+                        className="summarize-button"
+                        onClick={() => handleSummarize(article)}
+                      >
+                        Summarize
+                      </button>
+                    ) : (
+                      <button className="summarize-button" disabled>
+                        Summarize
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {summarizedArticle && (
+                <div className="summarized-article">
+                  <h2>Summary</h2>
+                  <p>{summarizedArticle}</p>
+                </div>
+              )}
             </div>
           )}
         </div>
