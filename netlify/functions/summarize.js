@@ -1,3 +1,5 @@
+const axios = require('axios');
+const cheerio = require('cheerio');
 const OpenAI = require('openai');
 
 const client = new OpenAI({
@@ -7,24 +9,46 @@ const client = new OpenAI({
 exports.handler = async (event) => {
   const { url } = JSON.parse(event.body);
 
-  // Simulate fetching HTML content and truncating it for the example
-  const truncated_content = "Example HTML content"; // Replace with actual content fetching logic
-  
-  const input_message = `Summarize the content of the article from the provided URL: ${url}. HTML content: ${truncated_content}`;
+  // Verify the URL is valid
+  if (!url || !/^https?:\/\/[^ "]+$/.test(url)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid URL' }),
+    };
+  }
 
   try {
+    // Fetch the HTML content of the page
+    const response = await axios.get(url);
+    const html = response.data;
+
+    // Load the HTML into cheerio for parsing
+    const $ = cheerio.load(html);
+
+    // Extract the raw text content from the page
+    const rawText = $('body').text().trim();
+
+    if (!rawText) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Could not extract text content from the URL' }),
+      };
+    }
+
+    const input_message = `Summarize the following content: ${rawText}`;
+
     const messages = [
       { role: "system", content: "Output your response in plain text." },
       { role: "user", content: input_message }
     ];
 
-    const response = await client.chat.completions.create({
+    const gptResponse = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
       max_tokens: 500
     });
 
-    const result_content = response.choices[0].message.content;
+    const result_content = gptResponse.choices[0].message.content;
 
     return {
       statusCode: 200,
