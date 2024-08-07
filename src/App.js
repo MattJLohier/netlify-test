@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import netlifyIdentity from './netlifyIdentity';
 import { fetchArticles } from './fetchArticles';
@@ -37,13 +37,7 @@ function App() {
     loadArticles();
   }, []);
 
-  useEffect(() => {
-    if (activeTab === 'summarize') {
-      checkArticleValidity();
-    }
-  }, [activeTab]);
-
-  const checkArticleValidity = async () => {
+  const checkArticleValidity = useCallback(async () => {
     const validity = {};
     for (const article of savedArticles) {
       try {
@@ -57,7 +51,13 @@ function App() {
       }
     }
     setArticleValidity(validity);
-  };
+  }, [savedArticles]);
+
+  useEffect(() => {
+    if (activeTab === 'summarize') {
+      checkArticleValidity();
+    }
+  }, [activeTab, checkArticleValidity]);
 
   const saveOrUnsaveArticle = (article) => {
     if (savedArticles.some(saved => saved.title === article.title)) {
