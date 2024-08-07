@@ -7,7 +7,7 @@ const client = new OpenAI({
 });
 
 const isVideoPlatform = (url) => {
-  const videoPlatforms = ['youtube.com', 'vimeo.com', 'dailymotion.com'];
+  const videoPlatforms = ['youtube', 'vimeo', 'dailymotion'];
   return videoPlatforms.some(platform => url.includes(platform));
 };
 
@@ -62,7 +62,7 @@ exports.handler = async (event) => {
       ];
 
       const gptResponse = await client.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: messages,
         max_tokens: 500
       });
