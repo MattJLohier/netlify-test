@@ -14,6 +14,7 @@ function App() {
   const [summarizedArticle, setSummarizedArticle] = useState(null);
   const [articleValidity, setArticleValidity] = useState({});
   const [loading, setLoading] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
     netlifyIdentity.on('login', (user) => setUser(user));
@@ -76,6 +77,7 @@ function App() {
 
   const handleSummarize = async (article) => {
     if (!articleValidity[article.title]) return;
+    setSummaryLoading(true);
     try {
       const response = await axios.post('/.netlify/functions/summarize', {
         url: article.link,
@@ -85,6 +87,7 @@ function App() {
     } catch (error) {
       console.error('Failed to summarize the article:', error);
     }
+    setSummaryLoading(false);
   };
 
   if (!user) {
@@ -166,6 +169,22 @@ function App() {
           {activeTab === 'summarize' && (
             <div>
               <h1>Summarize Articles</h1>
+              <div className="summary-section">
+                {summaryLoading ? (
+                  <div className="summary-loading">
+                    <div className="spinner"></div>
+                  </div>
+                ) : (
+                  <div>
+                    <h2>Summary</h2>
+                    {summarizedArticle ? (
+                      <p>{summarizedArticle}</p>
+                    ) : (
+                      <p>No summary available.</p>
+                    )}
+                  </div>
+                )}
+              </div>
               {savedArticles.map((article, index) => (
                 <div key={index} className="article-group">
                   <div className="article">
@@ -190,12 +209,6 @@ function App() {
                   </div>
                 </div>
               ))}
-              {summarizedArticle && (
-                <div className="summarized-article">
-                  <h2>Summary</h2>
-                  <p>{summarizedArticle}</p>
-                </div>
-              )}
             </div>
           )}
         </div>

@@ -225,3 +225,22 @@ button:hover {
 .content.loading {
   opacity: 0.5;
 }
+
+.summary-section {
+  background-color: white;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.summary-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.article-group {
+  margin-bottom: 20px;
+}

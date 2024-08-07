@@ -64,7 +64,7 @@ exports.handler = async (event) => {
       const gptResponse = await client.chat.completions.create({
         model: "gpt-4o",
         messages: messages,
-        max_tokens: 500
+        max_tokens: 1000
       });
 
       const result_content = gptResponse.choices[0].message.content;
