@@ -4,7 +4,7 @@ import { fetchArticles } from './fetchArticles';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [articles, setArticles] = useState([]);
+  const [articleGroups, setArticleGroups] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
 
   useEffect(() => {
@@ -19,8 +19,12 @@ function App() {
 
   useEffect(() => {
     const loadArticles = async () => {
-      const articles = await fetchArticles();
-      setArticles(articles);
+      try {
+        const data = await fetchArticles();
+        setArticleGroups(data);
+      } catch (error) {
+        console.error('Failed to fetch articles:', error);
+      }
     };
 
     loadArticles();
@@ -36,11 +40,19 @@ function App() {
       {user && <div>Welcome, {user.user_metadata.full_name}</div>}
       <div>
         <h1>Articles</h1>
-        {articles.map((article, index) => (
+        {articleGroups.map((group, index) => (
           <div key={index}>
-            <h2>{article.title}</h2>
-            <p>{article.content}</p>
-            <button onClick={() => saveArticle(article)}>Save</button>
+            <h2>{group.group_title}</h2>
+            {group.articles.map((article, idx) => (
+              <div key={idx}>
+                <h3>{article.title}</h3>
+                <p>{article.description}</p>
+                <p><strong>Date:</strong> {article.date}</p>
+                <p><strong>Source:</strong> {article.source_name}</p>
+                {article.link !== 'NA' && <a href={article.link}>Read more</a>}
+                <button onClick={() => saveArticle(article)}>Save</button>
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -48,8 +60,11 @@ function App() {
         <h1>Saved Articles</h1>
         {savedArticles.map((article, index) => (
           <div key={index}>
-            <h2>{article.title}</h2>
-            <p>{article.content}</p>
+            <h3>{article.title}</h3>
+            <p>{article.description}</p>
+            <p><strong>Date:</strong> {article.date}</p>
+            <p><strong>Source:</strong> {article.source_name}</p>
+            {article.link !== 'NA' && <a href={article.link}>Read more</a>}
           </div>
         ))}
       </div>
