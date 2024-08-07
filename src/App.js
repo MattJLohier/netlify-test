@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import netlifyIdentity from './netlifyIdentity';
+import netlifyIdentity from 'netlify-identity-widget';
 import { fetchArticles } from './fetchArticles';
 import './App.css';
 import logo from './images/logo.png'; // Update the path to the logo image
@@ -17,6 +17,11 @@ function App() {
   const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
+    const currentUser = netlifyIdentity.currentUser();
+    if (currentUser) {
+      setUser(currentUser);
+    }
+
     netlifyIdentity.on('login', (user) => setUser(user));
     netlifyIdentity.on('logout', () => setUser(null));
 
