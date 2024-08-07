@@ -50,8 +50,8 @@ function App() {
     for (const article of savedArticles) {
       try {
         const response = await axios.post('/.netlify/functions/summarize', {
-        url: article.link,
-        action: 'check',
+          url: article.link,
+          action: 'check',
         });
         validity[article.title] = response.data.valid;
       } catch (error) {
