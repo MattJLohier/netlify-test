@@ -23,7 +23,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Fetch the HTML content of the page
+    // Try to access the URL
     const response = await axios.get(url);
     const html = response.data;
 
@@ -34,6 +34,7 @@ exports.handler = async (event) => {
     const rawText = $('body').text().trim();
 
     if (!rawText) {
+      console.error('No text content extracted from the URL');
       return {
         statusCode: 200,
         body: JSON.stringify({ valid: false, reason: 'Could not extract text content from the URL' }),
@@ -72,10 +73,10 @@ exports.handler = async (event) => {
       };
     }
   } catch (error) {
-    console.error('Failed to process the article:', error);
+    console.error('Failed to access or process the URL:', error);
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to process the article' }),
+      statusCode: 200,
+      body: JSON.stringify({ valid: false, reason: 'Failed to access the URL' }),
     };
   }
 };
