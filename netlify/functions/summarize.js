@@ -14,8 +14,11 @@ const isVideoPlatform = (url) => {
 exports.handler = async (event) => {
   const { url, action } = JSON.parse(event.body);
 
+  console.log('Received request:', { url, action });
+
   // Check if the URL is from a video platform
   if (isVideoPlatform(url)) {
+    console.log('URL is from a video platform:', url);
     return {
       statusCode: 200,
       body: JSON.stringify({ valid: false, reason: 'Video content is not supported' }),
@@ -32,9 +35,10 @@ exports.handler = async (event) => {
 
     // Extract the raw text content from the page
     const rawText = $('body').text().trim();
+    console.log('Extracted text length:', rawText.length);
 
     if (!rawText) {
-      console.error('No text content extracted from the URL');
+      console.error('No text content extracted from the URL:', url);
       return {
         statusCode: 200,
         body: JSON.stringify({ valid: false, reason: 'Could not extract text content from the URL' }),
@@ -42,6 +46,7 @@ exports.handler = async (event) => {
     }
 
     if (action === 'check') {
+      console.log('URL is valid for summarization:', url);
       return {
         statusCode: 200,
         body: JSON.stringify({ valid: true }),
@@ -67,6 +72,7 @@ exports.handler = async (event) => {
         body: JSON.stringify({ summary: result_content }),
       };
     } else {
+      console.error('Invalid action:', action);
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Invalid action' }),

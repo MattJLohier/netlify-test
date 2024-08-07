@@ -53,8 +53,10 @@ function App() {
           url: article.link,
           action: 'check',
         });
+        console.log('Response data for article:', article.title, response.data);
         validity[article.title] = response.data.valid;
       } catch (error) {
+        console.error('Error checking validity for article:', article.title, error);
         validity[article.title] = false;
       }
     }
