@@ -95,6 +95,30 @@ function App() {
     setSummaryLoading(false);
   };
 
+  const getSourceLink = (article) => {
+    return article.sourceLink || article.source_link || 'NA';
+  };
+
+  const getSourceName = (article) => {
+    return article.sourceName || article.source_name || 'Unknown Source';
+  };
+
+  const getCategoryBadgeClass = (category) => {
+    return `category-badge category-${category.toLowerCase().replace(/\s+/g, '-')}`;
+  };
+
+  const getFlagIcon = (category) => {
+    if (category.includes('JP')) {
+      return '/jp-flag.svg';
+    } else if (category.includes('US')) {
+      return '/us-flag.svg';
+    } else if (category.includes('EU')) {
+      return '/eu-flag.svg';
+    } else {
+      return null;
+    }
+  };
+
   if (!user) {
     return <LoginScreen />;
   }
@@ -132,11 +156,25 @@ function App() {
                   <h2>{group.group_title}</h2>
                   {group.articles.map((article, idx) => (
                     <div key={idx} className="article">
-                      <h3>{article.title}</h3>
+                      <div className="article-header">
+                        <h3>{article.title}</h3>
+                        <div className="article-header-right">
+                          <div className={getCategoryBadgeClass(article.category)}>{article.category}</div>
+                          {getFlagIcon(article.category) && (
+                            <img
+                              src={getFlagIcon(article.category)}
+                              alt={`${article.category} flag`}
+                              className="flag-icon"
+                            />
+                          )}
+                        </div>
+                      </div>
                       <p>{article.description}</p>
                       <p><strong>Date:</strong> {article.date}</p>
-                      <p><strong>Source:</strong> {article.source_name}</p>
-                      {article.link !== 'NA' && <a className="article-link" href={article.link} target="_blank" rel="noopener noreferrer">Read more</a>}
+                      <p><strong>Source:</strong> {getSourceName(article)}</p>
+                      {getSourceLink(article) !== 'NA' && (
+                        <a className="article-link" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read more</a>
+                      )}
                       <button
                         className={savedArticles.some(saved => saved.title === article.title) ? 'unsave-button' : 'save-button'}
                         onClick={() => saveOrUnsaveArticle(article)}
@@ -155,11 +193,25 @@ function App() {
               {savedArticles.map((article, index) => (
                 <div key={index} className="article-group">
                   <div className="article">
-                    <h3>{article.title}</h3>
+                    <div className="article-header">
+                      <h3>{article.title}</h3>
+                      <div className="article-header-right">
+                        <div className={getCategoryBadgeClass(article.category)}>{article.category}</div>
+                        {getFlagIcon(article.category) && (
+                          <img
+                            src={getFlagIcon(article.category)}
+                            alt={`${article.category} flag`}
+                            className="flag-icon"
+                          />
+                        )}
+                      </div>
+                    </div>
                     <p>{article.description}</p>
                     <p><strong>Date:</strong> {article.date}</p>
-                    <p><strong>Source:</strong> {article.source_name}</p>
-                    {article.link !== 'NA' && <a className="article-link" href={article.link} target="_blank" rel="noopener noreferrer">Read more</a>}
+                    <p><strong>Source:</strong> {getSourceName(article)}</p>
+                    {getSourceLink(article) !== 'NA' && (
+                      <a className="article-link" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read more</a>
+                    )}
                     <button
                       className="unsave-button"
                       onClick={() => saveOrUnsaveArticle(article)}
@@ -193,11 +245,25 @@ function App() {
               {savedArticles.map((article, index) => (
                 <div key={index} className="article-group">
                   <div className="article">
-                    <h3>{article.title}</h3>
+                    <div className="article-header">
+                      <h3>{article.title}</h3>
+                      <div className="article-header-right">
+                        <div className={getCategoryBadgeClass(article.category)}>{article.category}</div>
+                        {getFlagIcon(article.category) && (
+                          <img
+                            src={getFlagIcon(article.category)}
+                            alt={`${article.category} flag`}
+                            className="flag-icon"
+                          />
+                        )}
+                      </div>
+                    </div>
                     <p>{article.description}</p>
                     <p><strong>Date:</strong> {article.date}</p>
-                    <p><strong>Source:</strong> {article.source_name}</p>
-                    {article.link !== 'NA' && <a className="article-link" href={article.link} target="_blank" rel="noopener noreferrer">Read more</a>}
+                    <p><strong>Source:</strong> {getSourceName(article)}</p>
+                    {getSourceLink(article) !== 'NA' && (
+                      <a className="article-link" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read more</a>
+                    )}
                     {article.link !== 'NA' ? (
                       <button
                         className="summarize-button"

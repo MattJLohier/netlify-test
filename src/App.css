@@ -245,3 +245,58 @@ button:hover {
 .article-group {
   margin-bottom: 20px;
 }
+
+.article {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.article-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.flag-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.category-us-company-site {
+  background-color: #007bff;
+}
+
+.category-us-industry-news {
+  background-color: #28a745;
+}
+
+.category-jp-company-site {
+  background-color: #ff0000;
+}
+
+.category-eu-company-site {
+  background-color: #ff9900;
+}
+
+.category-eu-industry-news {
+  background-color: purple;
+}
