@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import netlifyIdentity from './netlifyIdentity';
 import { fetchArticles } from './fetchArticles';
+import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
   const [articleGroups, setArticleGroups] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
+  const [activeTab, setActiveTab] = useState('articles');
 
   useEffect(() => {
     netlifyIdentity.on('login', (user) => setUser(user));
@@ -30,43 +32,72 @@ function App() {
     loadArticles();
   }, []);
 
-  const saveArticle = (article) => {
-    setSavedArticles([...savedArticles, article]);
+  const saveOrUnsaveArticle = (article) => {
+    if (savedArticles.some(saved => saved.title === article.title)) {
+      setSavedArticles(savedArticles.filter(saved => saved.title !== article.title));
+    } else {
+      setSavedArticles([...savedArticles, article]);
+    }
   };
 
   return (
     <div className="App">
-      <button onClick={() => netlifyIdentity.open()}>Log In</button>
+      <button className="login-button" onClick={() => netlifyIdentity.open()}>Log In</button>
       {user && <div>Welcome, {user.user_metadata.full_name}</div>}
-      <div>
-        <h1>Articles</h1>
-        {articleGroups.map((group, index) => (
-          <div key={index}>
-            <h2>{group.group_title}</h2>
-            {group.articles.map((article, idx) => (
-              <div key={idx}>
-                <h3>{article.title}</h3>
-                <p>{article.description}</p>
-                <p><strong>Date:</strong> {article.date}</p>
-                <p><strong>Source:</strong> {article.source_name}</p>
-                {article.link !== 'NA' && <a href={article.link}>Read more</a>}
-                <button onClick={() => saveArticle(article)}>Save</button>
+
+      <div className="nav">
+        <button className={activeTab === 'articles' ? 'active' : ''} onClick={() => setActiveTab('articles')}>Articles</button>
+        <button className={activeTab === 'saved' ? 'active' : ''} onClick={() => setActiveTab('saved')}>Saved</button>
+      </div>
+
+      <div className="content">
+        {activeTab === 'articles' && (
+          <div>
+            <h1>Articles</h1>
+            {articleGroups.map((group, index) => (
+              <div key={index} className="article-group">
+                <h2>{group.group_title}</h2>
+                {group.articles.map((article, idx) => (
+                  <div key={idx} className="article">
+                    <h3>{article.title}</h3>
+                    <p>{article.description}</p>
+                    <p><strong>Date:</strong> {article.date}</p>
+                    <p><strong>Source:</strong> {article.source_name}</p>
+                    {article.link !== 'NA' && <a className="article-link" href={article.link} target="_blank" rel="noopener noreferrer">Read more</a>}
+                    <button
+                      className={savedArticles.some(saved => saved.title === article.title) ? 'unsave-button' : 'save-button'}
+                      onClick={() => saveOrUnsaveArticle(article)}
+                    >
+                      {savedArticles.some(saved => saved.title === article.title) ? 'Unsave' : 'Save'}
+                    </button>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        ))}
-      </div>
-      <div>
-        <h1>Saved Articles</h1>
-        {savedArticles.map((article, index) => (
-          <div key={index}>
-            <h3>{article.title}</h3>
-            <p>{article.description}</p>
-            <p><strong>Date:</strong> {article.date}</p>
-            <p><strong>Source:</strong> {article.source_name}</p>
-            {article.link !== 'NA' && <a href={article.link}>Read more</a>}
+        )}
+        {activeTab === 'saved' && (
+          <div>
+            <h1>Saved Articles</h1>
+            {savedArticles.map((article, index) => (
+              <div key={index} className="article-group">
+                <div className="article">
+                  <h3>{article.title}</h3>
+                  <p>{article.description}</p>
+                  <p><strong>Date:</strong> {article.date}</p>
+                  <p><strong>Source:</strong> {article.source_name}</p>
+                  {article.link !== 'NA' && <a className="article-link" href={article.link} target="_blank" rel="noopener noreferrer">Read more</a>}
+                  <button
+                    className="unsave-button"
+                    onClick={() => saveOrUnsaveArticle(article)}
+                  >
+                    Unsave
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
