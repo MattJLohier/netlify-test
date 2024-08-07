@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import netlifyIdentity from './netlifyIdentity';
 import { fetchArticles } from './fetchArticles';
 import './App.css';
-import logo from './images/logo.png'; // Make sure to add your logo image in the same directory
+import logo from './images/logo.png'; // Update the path to the logo image
+import LoginScreen from './LoginScreen'; // Import the new LoginScreen component
 
 function App() {
   const [user, setUser] = useState(null);
@@ -41,12 +42,25 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    netlifyIdentity.logout();
+  };
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
   return (
     <div className="App">
       <div className="sidebar">
         <img src={logo} alt="Logo" className="logo" />
-        {user && <div className="user-info">Welcome, {user.user_metadata.full_name}</div>}
-        <button className="login-button" onClick={() => netlifyIdentity.open()}>Log In</button>
+        {user && (
+          <div className="user-info">
+            Welcome, {user.user_metadata.full_name}
+            <br></br>
+            <button className="logout-button" onClick={handleLogout}>Log Out</button>
+          </div>
+        )}
       </div>
       <div className="main-content">
         <div className="nav">

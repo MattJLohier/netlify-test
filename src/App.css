@@ -145,3 +145,48 @@ button[disabled] {
 button:hover {
   opacity: 0.8; /* Add a hover effect */
 }
+
+.login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.login-screen h1 {
+  margin-bottom: 2rem;
+}
+
+.login-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  outline: none; /* Remove default outline */
+  box-shadow: none; /* Remove default shadow */
+}
+
+button:hover {
+  opacity: 0.8; /* Add a hover effect */
+}
+
+.logout-button {
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+  outline: none; /* Remove default outline */
+  box-shadow: none; /* Remove default shadow */
+}
+
+.logout-button:hover {
+  opacity: 0.8; /* Add a hover effect */
+}
