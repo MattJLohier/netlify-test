@@ -1,7 +1,18 @@
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
-  const { url, action } = JSON.parse(event.body);
+  let requestBody;
+  try {
+    requestBody = JSON.parse(event.body);
+    console.log('Request body:', requestBody); // Log the request body to check its content
+  } catch (error) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid JSON' }),
+    };
+  }
+
+  const { url, action } = requestBody;
 
   if (!url || !action) {
     return {
@@ -19,7 +30,6 @@ exports.handler = async (event, context) => {
   }
 
   if (action === 'check') {
-    // Implement URL checking logic here (e.g., check if the URL returns valid content)
     return {
       statusCode: 200,
       body: JSON.stringify({ valid: true }),
