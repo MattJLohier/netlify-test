@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { JSDOM } = require('jsdom');
 
 exports.handler = async (event, context) => {
   let requestBody;
@@ -14,9 +13,13 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const { url, action } = requestBody;
+  const getSourceLink = (body) => body.url || body.sourceLink || body.source_link || 'NA';
+  const getAction = (body) => body.action || 'check';
 
-  if (!url || !action) {
+  const url = getSourceLink(requestBody);
+  const action = getAction(requestBody);
+
+  if (url === 'NA' || !action) {
     console.error('Missing url or action');
     return {
       statusCode: 400,
@@ -50,58 +53,31 @@ exports.handler = async (event, context) => {
   }
 
   if (action === 'summarize') {
-    console.log('Preparing to summarize content for URL:', url);
-
-    let rawText = '';
-
     try {
-      // Fetch HTML content from the URL
-      const response = await axios.get(url);
-      const htmlContent = response.data;
-
-      // Parse HTML and extract text content
-      const dom = new JSDOM(htmlContent);
-      rawText = dom.window.document.body.textContent || '';
-
-      console.log('Fetched raw text:', rawText); // Log the fetched raw text to check its content
-    } catch (error) {
-      console.error('Error fetching URL content:', error);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to fetch URL content' }),
-      };
-    }
-
-    const input_message = `Please summarize the following news article: ${rawText}`;
-
-    const messages = [
-      { role: "system", content: "Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives. Remove marketing jargon, simplify complex language, and maintain an analyst's tone: professional, factual, and in the present tense. Each summary includes the date of the event in the first sentence and focuses on key details and their significance for the stakeholders involved. If there are any UK spellings, change them to US spellings. Your goal is to provide clear, actionable insights without superfluous details. Try to keep the summaries to 1 paragraph." },
-      { role: "user", content: input_message }
-    ];
-
-    try {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: "gpt-4",
-        messages: messages,
-        max_tokens: 1000
-      }, {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
+      console.log('Sending request to OpenAI');
+      const response = await axios.post(
+        'https://api.openai.com/v1/engines/davinci-codex/completions',
+        {
+          prompt: `Summarize the content from the URL: ${url}`,
+          max_tokens: 150,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
         }
-      });
+      );
 
-      const result_content = response.data.choices[0].message.content;
-
+      console.log('OpenAI response:', response.data); // Log the response from OpenAI
       return {
         statusCode: 200,
-        body: JSON.stringify({ summary: result_content }),
+        body: JSON.stringify({ summary: response.data.choices[0].text }),
       };
     } catch (error) {
-      console.error('Error during API call:', error);
+      console.error('Error summarizing content:', error.response ? error.response.data : error.message);
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to summarize the article' }),
+        body: JSON.stringify({ error: error.response ? error.response.data : error.message }),
       };
     }
   }
