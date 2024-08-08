@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { JSDOM } = require('jsdom');
 
 exports.handler = async (event, context) => {
   let requestBody;
@@ -51,8 +52,25 @@ exports.handler = async (event, context) => {
   if (action === 'summarize') {
     console.log('Preparing to summarize content for URL:', url);
 
-    // Simulate fetching rawText from the URL (replace with actual fetching logic)
-    const rawText = 'Your fetched raw text from the URL goes here.';
+    let rawText = '';
+
+    try {
+      // Fetch HTML content from the URL
+      const response = await axios.get(url);
+      const htmlContent = response.data;
+
+      // Parse HTML and extract text content
+      const dom = new JSDOM(htmlContent);
+      rawText = dom.window.document.body.textContent || '';
+
+      console.log('Fetched raw text:', rawText); // Log the fetched raw text to check its content
+    } catch (error) {
+      console.error('Error fetching URL content:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Failed to fetch URL content' }),
+      };
+    }
 
     const input_message = `Please summarize the following news article: ${rawText}`;
 
