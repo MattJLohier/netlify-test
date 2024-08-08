@@ -1,89 +1,100 @@
 const axios = require('axios');
+const cheerio = require('cheerio');
+const { Configuration, OpenAIApi } = require('openai');
 
-exports.handler = async (event, context) => {
-  let requestBody;
-  try {
-    requestBody = JSON.parse(event.body);
-    console.log('Request body:', requestBody); // Log the request body to check its content
-  } catch (error) {
-    console.error('Error parsing JSON:', error);
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const client = new OpenAIApi(configuration);
+
+const isVideoPlatform = (url) => {
+  const videoPlatforms = ['youtube', 'youtu.be', 'vimeo', 'dailymotion'];
+  return videoPlatforms.some(platform => url.includes(platform));
+};
+
+exports.handler = async (event) => {
+  const { url, action } = JSON.parse(event.body);
+
+  // Verify the URL is valid
+  if (!url || !/^https?:\/\/[^ "]+$/.test(url)) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid JSON' }),
+      body: JSON.stringify({ error: 'Invalid URL' }),
     };
   }
 
-  const getSourceLink = (body) => body.url || body.sourceLink || body.source_link || 'NA';
-  const getAction = (body) => body.action || 'check';
-
-  const url = getSourceLink(requestBody);
-  const action = getAction(requestBody);
-
-  if (url === 'NA' || !action) {
-    console.error('Missing url or action');
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Missing url or action' }),
-    };
-  }
-
-  // Check for invalid URLs
-  if (url.includes('youtube') || url.includes('youtu.be') || url.endsWith('.pdf')) {
-    console.error('URL is not summarizable');
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'URL is not summarizable' }),
-    };
-  }
-
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    console.error('OpenAI API key is missing');
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'OpenAI API key is missing' }),
-    };
-  }
-
-  if (action === 'check') {
+  // Check if the URL is from a video platform
+  if (isVideoPlatform(url)) {
     return {
       statusCode: 200,
-      body: JSON.stringify({ valid: true }),
+      body: JSON.stringify({ valid: false, reason: 'Video content is not supported' }),
     };
   }
 
-  if (action === 'summarize') {
-    try {
-      const response = await axios.post(
-        'https://api.openai.com/v1/engines/davinci-codex/completions',
-        {
-          prompt: `Summarize the content from the URL: ${url}`,
-          max_tokens: 150,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-          },
-        }
-      );
+  try {
+    // Fetch the HTML content of the page
+    const response = await axios.get(url);
+    const html = response.data;
 
-      console.log('OpenAI response:', response.data); // Log the response from OpenAI
+    // Load the HTML into cheerio for parsing
+    const $ = cheerio.load(html);
+
+    // Extract the raw text content from the page, excluding certain tags
+    const excludeTags = 'script, style, nav, footer, header, aside, form';
+    const rawText = $('body').children().not(excludeTags).text().trim();
+    
+    // Log the raw text for debugging
+    console.log('Raw Text:', rawText);
+
+    if (!rawText) {
       return {
         statusCode: 200,
-        body: JSON.stringify({ summary: response.data.choices[0].text }),
-      };
-    } catch (error) {
-      console.error('Error summarizing content:', error.response ? error.response.data : error.message);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: error.response ? error.response.data : error.message }),
+        body: JSON.stringify({ valid: false, reason: 'Could not extract text content from the URL' }),
       };
     }
-  }
 
-  console.error('Invalid action');
-  return {
-    statusCode: 400,
-    body: JSON.stringify({ error: 'Invalid action' }),
-  };
+    if (action === 'check') {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ valid: true }),
+      };
+    } else if (action === 'summarize') {
+      const input_message = `Summarize the following content: ${rawText}`;
+
+      const messages = [
+        { role: "system", content: "Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives. Remove marketing jargon, simplify complex language, and maintain an analyst's tone: professional, factual, and in the present tense. Each summary includes the date of the event in the first sentence and focuses on key details and their significance for the stakeholders involved. If there are any UK spellings, change them to US spellings. Your goal is to provide clear, actionable insights without superfluous details. Try to keep the summaries to 1 paragraph." },
+        { role: "user", content: input_message }
+      ];
+
+      // Log the messages sent to OpenAI for debugging
+      console.log('Messages sent to OpenAI:', messages);
+
+      const gptResponse = await client.createChatCompletion({
+        model: "gpt-4",
+        messages: messages,
+        max_tokens: 500
+      });
+
+      // Log the response from OpenAI for debugging
+      console.log('GPT Response:', gptResponse);
+
+      const result_content = gptResponse.data.choices[0].message.content;
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ summary: result_content }),
+      };
+    } else {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid action' }),
+      };
+    }
+  } catch (error) {
+    console.error('Failed to process the article:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Failed to process the article' }),
+    };
+  }
 };
