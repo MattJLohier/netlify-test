@@ -12,10 +12,23 @@ const isVideoPlatform = (url) => {
 };
 
 exports.handler = async (event) => {
-  const { url, action } = JSON.parse(event.body);
+  let requestBody;
+  try {
+    requestBody = JSON.parse(event.body);
+    console.log('Request body:', requestBody); // Log the request body to check its content
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid JSON' }),
+    };
+  }
+
+  const { url, action } = requestBody;
 
   // Verify the URL is valid
   if (!url || !/^https?:\/\/[^ "]+$/.test(url)) {
+    console.error('Invalid URL:', url);
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Invalid URL' }),
@@ -24,6 +37,7 @@ exports.handler = async (event) => {
 
   // Check if the URL is from a video platform
   if (isVideoPlatform(url)) {
+    console.error('Video content is not supported:', url);
     return {
       statusCode: 200,
       body: JSON.stringify({ valid: false, reason: 'Video content is not supported' }),
@@ -32,16 +46,20 @@ exports.handler = async (event) => {
 
   try {
     // Fetch the HTML content of the page
+    console.log('Fetching content from URL:', url);
     const response = await axios.get(url);
     const html = response.data;
 
     // Load the HTML into cheerio for parsing
+    console.log('Parsing HTML content');
     const $ = cheerio.load(html);
 
     // Extract the raw text content from the page
     const rawText = $('body').text().trim();
+    console.log('Extracted raw text length:', rawText.length);
 
     if (!rawText) {
+      console.error('Could not extract text content from the URL');
       return {
         statusCode: 200,
         body: JSON.stringify({ valid: false, reason: 'Could not extract text content from the URL' }),
@@ -61,29 +79,40 @@ exports.handler = async (event) => {
         { role: "user", content: input_message }
       ];
 
-      const gptResponse = await client.chat.completions.create({
-        model: "gpt-4",
-        messages: messages,
-        max_tokens: 1000
-      });
+      try {
+        console.log('Sending request to OpenAI API');
+        const gptResponse = await client.chat.completions.create({
+          model: "gpt-4",
+          messages: messages,
+          max_tokens: 1000
+        });
 
-      const result_content = gptResponse.choices[0].message.content;
+        const result_content = gptResponse.choices[0].message.content;
+        console.log('Received response from OpenAI API:', result_content);
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ summary: result_content }),
-      };
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ summary: result_content }),
+        };
+      } catch (apiError) {
+        console.error('Error during OpenAI API call:', apiError.response ? apiError.response.data : apiError.message);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ error: 'Failed to summarize the article', details: apiError.response ? apiError.response.data : apiError.message }),
+        };
+      }
     } else {
+      console.error('Invalid action:', action);
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Invalid action' }),
       };
     }
-  } catch (error) {
-    console.error('Failed to process the article:', error);
+  } catch (fetchError) {
+    console.error('Failed to process the article:', fetchError.message);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to process the article' }),
+      body: JSON.stringify({ error: 'Failed to process the article', details: fetchError.message }),
     };
   }
 };
