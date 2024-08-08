@@ -1,9 +1,10 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 const cheerio = require('cheerio');
 const OpenAI = require('openai');
 
 const client = new OpenAI({
   api_key: process.env.OPENAI_API_KEY,
+  
 });
 
 const isVideoPlatform = (url) => {
@@ -47,8 +48,8 @@ exports.handler = async (event) => {
   try {
     // Fetch the HTML content of the page
     console.log('Fetching content from URL:', url);
-    const response = await fetch(url);
-    const html = await response.text();
+    const response = await axios.get(url);
+    const html = response.data;
 
     // Load the HTML into cheerio for parsing
     console.log('Parsing HTML content');
