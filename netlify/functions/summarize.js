@@ -4,10 +4,12 @@ const OpenAI = require('openai');
 
 const client = new OpenAI({
   api_key: process.env.OPENAI_API_KEY,
+  
 });
 
 const isVideoPlatform = (url) => {
   const videoPlatforms = ['youtube', 'youtu.be', 'vimeo', 'dailymotion'];
+  console.log('OpenAI API Key:', process.env.OPENAI_API_KEY);
   return videoPlatforms.some(platform => url.includes(platform));
 };
 
