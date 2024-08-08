@@ -59,15 +59,15 @@ exports.handler = async (event, context) => {
       console.log('Fetching content from URL:', url);
       const response = await axios.get(url);
       const htmlContent = response.data;
-      console.log('Fetched HTML content:', htmlContent); // Log fetched HTML content
+      console.log('Fetched HTML content length:', htmlContent.length); // Log fetched HTML content length
 
       // Parse HTML and extract text content
       console.log('Parsing HTML content');
       const dom = new JSDOM(htmlContent);
       rawText = dom.window.document.body.textContent || '';
-      console.log('Extracted raw text:', rawText); // Log extracted raw text
+      console.log('Extracted raw text length:', rawText.length); // Log extracted raw text length
     } catch (error) {
-      console.error('Error fetching URL content:', error);
+      console.error('Error fetching URL content:', error.message);
       return {
         statusCode: 500,
         body: JSON.stringify({ error: 'Failed to fetch URL content' }),
