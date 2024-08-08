@@ -51,10 +51,10 @@ exports.handler = async (event, context) => {
   if (action === 'summarize') {
     console.log('Preparing to summarize content for URL:', url);
 
-    // Assuming you fetch rawText from the URL, let's simplify this example:
+    // Simulate fetching rawText from the URL (replace with actual fetching logic)
     const rawText = 'Your fetched raw text from the URL goes here.';
 
-    const input_message = `Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives.: ${rawText}`;
+    const input_message = `Please summarize the following news article: ${rawText}`;
 
     const messages = [
       { role: "system", content: "Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives. Remove marketing jargon, simplify complex language, and maintain an analyst's tone: professional, factual, and in the present tense. Each summary includes the date of the event in the first sentence and focuses on key details and their significance for the stakeholders involved. If there are any UK spellings, change them to US spellings. Your goal is to provide clear, actionable insights without superfluous details. Try to keep the summaries to 1 paragraph." },
