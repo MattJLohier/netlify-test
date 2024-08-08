@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { JSDOM } = require('jsdom');
 
 exports.handler = async (event, context) => {
   let requestBody;
@@ -13,13 +14,9 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const getSourceLink = (body) => body.url || body.sourceLink || body.source_link || 'NA';
-  const getAction = (body) => body.action || 'check';
+  const { url, action } = requestBody;
 
-  const url = getSourceLink(requestBody);
-  const action = getAction(requestBody);
-
-  if (url === 'NA' || !action) {
+  if (!url || !action) {
     console.error('Missing url or action');
     return {
       statusCode: 400,
@@ -53,31 +50,62 @@ exports.handler = async (event, context) => {
   }
 
   if (action === 'summarize') {
-    try {
-      console.log('Sending request to OpenAI');
-      const response = await axios.post(
-        'https://api.openai.com/v1/engines/davinci-codex/completions',
-        {
-          prompt: `Summarize the content from the URL: ${url}`,
-          max_tokens: 150,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-          },
-        }
-      );
+    console.log('Preparing to summarize content for URL:', url);
 
-      console.log('OpenAI response:', response.data); // Log the response from OpenAI
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ summary: response.data.choices[0].text }),
-      };
+    let rawText = '';
+
+    try {
+      // Fetch HTML content from the URL
+      console.log('Fetching content from URL:', url);
+      const response = await axios.get(url);
+      const htmlContent = response.data;
+      console.log('Fetched HTML content:', htmlContent); // Log fetched HTML content
+
+      // Parse HTML and extract text content
+      console.log('Parsing HTML content');
+      const dom = new JSDOM(htmlContent);
+      rawText = dom.window.document.body.textContent || '';
+      console.log('Extracted raw text:', rawText); // Log extracted raw text
     } catch (error) {
-      console.error('Error summarizing content:', error.response ? error.response.data : error.message);
+      console.error('Error fetching URL content:', error);
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: error.response ? error.response.data : error.message }),
+        body: JSON.stringify({ error: 'Failed to fetch URL content' }),
+      };
+    }
+
+    const input_message = `Please summarize the following news article: ${rawText}`;
+
+    const messages = [
+      { role: "system", content: "Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives. Remove marketing jargon, simplify complex language, and maintain an analyst's tone: professional, factual, and in the present tense. Each summary includes the date of the event in the first sentence and focuses on key details and their significance for the stakeholders involved. If there are any UK spellings, change them to US spellings. Your goal is to provide clear, actionable insights without superfluous details. Try to keep the summaries to 1 paragraph." },
+      { role: "user", content: input_message }
+    ];
+
+    try {
+      console.log('Sending request to OpenAI API');
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-4",
+        messages: messages,
+        max_tokens: 1000
+      }, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result_content = response.data.choices[0].message.content;
+      console.log('Received response from OpenAI API:', result_content); // Log the summary result
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ summary: result_content }),
+      };
+    } catch (error) {
+      console.error('Error during API call:', error.response ? error.response.data : error.message);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Failed to summarize the article' }),
       };
     }
   }
