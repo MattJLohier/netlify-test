@@ -6,6 +6,7 @@ exports.handler = async (event, context) => {
     requestBody = JSON.parse(event.body);
     console.log('Request body:', requestBody); // Log the request body to check its content
   } catch (error) {
+    console.error('Error parsing JSON:', error);
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Invalid JSON' }),
@@ -15,6 +16,7 @@ exports.handler = async (event, context) => {
   const { url, action } = requestBody;
 
   if (!url || !action) {
+    console.error('Missing url or action');
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Missing url or action' }),
@@ -23,6 +25,7 @@ exports.handler = async (event, context) => {
 
   // Check for invalid URLs
   if (url.includes('youtube') || url.includes('youtu.be') || url.endsWith('.pdf')) {
+    console.error('URL is not summarizable');
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'URL is not summarizable' }),
@@ -31,6 +34,7 @@ exports.handler = async (event, context) => {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
+    console.error('OpenAI API key is missing');
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'OpenAI API key is missing' }),
@@ -38,7 +42,6 @@ exports.handler = async (event, context) => {
   }
 
   if (action === 'check') {
-    // Implement URL checking logic here (e.g., check if the URL returns valid content)
     return {
       statusCode: 200,
       body: JSON.stringify({ valid: true }),
@@ -60,18 +63,21 @@ exports.handler = async (event, context) => {
         }
       );
 
+      console.log('OpenAI response:', response.data); // Log the response from OpenAI
       return {
         statusCode: 200,
         body: JSON.stringify({ summary: response.data.choices[0].text }),
       };
     } catch (error) {
+      console.error('Error summarizing content:', error.response ? error.response.data : error.message);
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: error.message }),
+        body: JSON.stringify({ error: error.response ? error.response.data : error.message }),
       };
     }
   }
 
+  console.error('Invalid action');
   return {
     statusCode: 400,
     body: JSON.stringify({ error: 'Invalid action' }),
