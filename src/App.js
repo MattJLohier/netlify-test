@@ -47,26 +47,26 @@ function App() {
   const checkArticleValidity = useCallback(async () => {
     setLoading(true);
     const validity = {};
-  
+
     for (const article of savedArticles) {
       const articleUrl = getSourceLink(article);
-  
+
       console.log('Checking validity for article:', article); // Log the article object
-  
+
       try {
         const payload = {
           url: articleUrl,
           action: 'check',
         };
-  
+
         console.log('Sending payload for validity check:', payload); // Log the payload
-  
+
         const response = await axios.post('/.netlify/functions/summarize', payload, {
           headers: {
             'Content-Type': 'application/json',
           },
         });
-  
+
         console.log('Response data for article:', article.title, response.data);
         validity[article.title] = response.data.valid;
       } catch (error) {
@@ -74,7 +74,7 @@ function App() {
         validity[article.title] = false;
       }
     }
-  
+
     setArticleValidity(validity);
     setLoading(false);
   }, [savedArticles]);
@@ -99,28 +99,28 @@ function App() {
 
   const handleSummarize = async (article) => {
     const articleUrl = getSourceLink(article);
-  
+
     if (articleUrl === 'NA' || !articleValidity[article.title]) {
       console.error('Invalid URL or article is not valid for summarizing');
       return;
     }
-  
+
     setSummaryLoading(true);
-  
+
     const payload = {
       url: articleUrl,
       action: 'summarize',
     };
-  
+
     console.log('Sending payload:', payload); // Log the payload to check its content
-  
+
     try {
       const response = await axios.post('/.netlify/functions/summarize', payload, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.status === 200) {
         setSummarizedArticle(response.data.summary);
       } else {
@@ -129,10 +129,9 @@ function App() {
     } catch (error) {
       console.error('Failed to summarize the article:', error);
     }
-  
+
     setSummaryLoading(false);
   };
-  
 
   const getSourceLink = (article) => {
     return article.sourceLink || article.source_link || 'NA';

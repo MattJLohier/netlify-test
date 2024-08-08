@@ -13,9 +13,13 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const { url, action } = requestBody;
+  const getSourceLink = (body) => body.url || body.sourceLink || body.source_link || 'NA';
+  const getAction = (body) => body.action || 'check';
 
-  if (!url || !action) {
+  const url = getSourceLink(requestBody);
+  const action = getAction(requestBody);
+
+  if (url === 'NA' || !action) {
     console.error('Missing url or action');
     return {
       statusCode: 400,
