@@ -1,4 +1,5 @@
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 exports.handler = async (event, context) => {
   let requestBody;
@@ -54,7 +55,11 @@ exports.handler = async (event, context) => {
     try {
       // Fetch the article content
       const articleResponse = await axios.get(url);
-      const rawText = articleResponse.data; // Adjust this to correctly extract the text content from the response
+      const html = articleResponse.data;
+
+      // Parse and extract text from the HTML using Cheerio
+      const $ = cheerio.load(html);
+      const rawText = $('body').text();
 
       const input_message = `Please summarize the following news article: ${rawText}`;
 
