@@ -1,58 +1,60 @@
 const axios = require('axios');
-const cheerio = require('cheerio');
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
   const { url, action } = JSON.parse(event.body);
 
-  // Check if the URL is from a video platform
-  const isVideoPlatform = (url) => {
-    const videoPlatforms = ['youtube', 'youtu.be', 'vimeo', 'dailymotion'];
-    return videoPlatforms.some(platform => url.includes(platform));
-  };
-
-  if (isVideoPlatform(url)) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ valid: false, reason: 'Video content is not supported' }),
-    };
-  }
-
-  try {
-    // Try to access the URL
-    const response = await axios.get(url);
-    const html = response.data;
-
-    // Load the HTML into cheerio for parsing
-    const $ = cheerio.load(html);
-
-    // Extract the raw text content from the page
-    const rawText = $('body').text().trim();
-
-    if (!rawText) {
-      console.error('No text content extracted from the URL:', url);
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ valid: false, reason: 'Could not extract text content from the URL' }),
-      };
-    }
-
-    if (action === 'check') {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ valid: true }),
-      };
-    }
-
+  if (!url || !action) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid action' }),
-    };
-
-  } catch (error) {
-    console.error('Failed to access or process the URL:', error);
-    return {
-      statusCode: 502,
-      body: JSON.stringify({ valid: false, reason: 'Failed to access the URL' }),
+      body: JSON.stringify({ error: 'Missing url or action' }),
     };
   }
+
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'OpenAI API key is missing' }),
+    };
+  }
+
+  if (action === 'check') {
+    // Implement URL checking logic here (e.g., check if the URL returns valid content)
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ valid: true }),
+    };
+  }
+
+  if (action === 'summarize') {
+    try {
+      const response = await axios.post(
+        'https://api.openai.com/v1/engines/davinci-codex/completions',
+        {
+          prompt: `Summarize the content from the URL: ${url}`,
+          max_tokens: 150,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+        }
+      );
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ summary: response.data.choices[0].text }),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: error.message }),
+      };
+    }
+  }
+
+  return {
+    statusCode: 400,
+    body: JSON.stringify({ error: 'Invalid action' }),
+  };
 };
