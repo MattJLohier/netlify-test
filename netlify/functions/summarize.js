@@ -51,18 +51,19 @@ exports.handler = async (event, context) => {
   if (action === 'summarize') {
     console.log('Preparing to summarize content for URL:', url);
 
-    // Simulate fetching rawText from the URL (replace with actual fetching logic)
-    const rawText = 'Your fetched raw text from the URL goes here.';
-
-    const input_message = `Please summarize the following news article: ${rawText}`;
-
-    const messages = [
-      { role: "system", content: "Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives. Remove marketing jargon, simplify complex language, and maintain an analyst's tone: professional, factual, and in the present tense. Each summary includes the date of the event in the first sentence and focuses on key details and their significance for the stakeholders involved. If there are any UK spellings, change them to US spellings. Your goal is to provide clear, actionable insights without superfluous details. Try to keep the summaries to 1 paragraph." },
-      { role: "user", content: input_message }
-    ];
-
     try {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      // Fetch the article content
+      const articleResponse = await axios.get(url);
+      const rawText = articleResponse.data; // Adjust this to correctly extract the text content from the response
+
+      const input_message = `Please summarize the following news article: ${rawText}`;
+
+      const messages = [
+        { role: "system", content: "Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives. Remove marketing jargon, simplify complex language, and maintain an analyst's tone: professional, factual, and in the present tense. Each summary includes the date of the event in the first sentence and focuses on key details and their significance for the stakeholders involved. If there are any UK spellings, change them to US spellings. Your goal is to provide clear, actionable insights without superfluous details. Try to keep the summaries to 1 paragraph." },
+        { role: "user", content: input_message }
+      ];
+
+      const gptResponse = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-4",
         messages: messages,
         max_tokens: 1000
@@ -73,7 +74,7 @@ exports.handler = async (event, context) => {
         }
       });
 
-      const result_content = response.data.choices[0].message.content;
+      const result_content = gptResponse.data.choices[0].message.content;
 
       return {
         statusCode: 200,
