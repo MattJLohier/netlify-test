@@ -50,26 +50,42 @@ exports.handler = async (event, context) => {
 
   if (action === 'summarize') {
     console.log('Preparing to summarize content for URL:', url);
-  
+
+    // Assuming you fetch rawText from the URL, let's simplify this example:
+    const rawText = 'Your fetched raw text from the URL goes here.';
+
     const input_message = `Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives.: ${rawText}`;
-  
+
     const messages = [
       { role: "system", content: "Your role is to distill industry news articles related to the print and copier market into concise, to-the-point summaries for a professional audience, including product managers, competitive intelligence managers, portfolio managers, and executives. Remove marketing jargon, simplify complex language, and maintain an analyst's tone: professional, factual, and in the present tense. Each summary includes the date of the event in the first sentence and focuses on key details and their significance for the stakeholders involved. If there are any UK spellings, change them to US spellings. Your goal is to provide clear, actionable insights without superfluous details. Try to keep the summaries to 1 paragraph." },
       { role: "user", content: input_message }
     ];
-  
-    const gptResponse = await client.chat.completions.create({
-      model: "gpt-4o",
-      messages: messages,
-      max_tokens: 1000
-    });
-  
-    const result_content = gptResponse.choices[0].message.content;
-  
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ summary: result_content }),
-    };
+
+    try {
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-4",
+        messages: messages,
+        max_tokens: 1000
+      }, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result_content = response.data.choices[0].message.content;
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ summary: result_content }),
+      };
+    } catch (error) {
+      console.error('Error during API call:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Failed to summarize the article' }),
+      };
+    }
   }
 
   console.error('Invalid action');
