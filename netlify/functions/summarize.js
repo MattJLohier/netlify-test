@@ -21,6 +21,14 @@ exports.handler = async (event, context) => {
     };
   }
 
+  // Check for invalid URLs
+  if (url.includes('youtube') || url.includes('youtu.be') || url.endsWith('.pdf')) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'URL is not summarizable' }),
+    };
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return {
@@ -30,6 +38,7 @@ exports.handler = async (event, context) => {
   }
 
   if (action === 'check') {
+    // Implement URL checking logic here (e.g., check if the URL returns valid content)
     return {
       statusCode: 200,
       body: JSON.stringify({ valid: true }),
