@@ -369,6 +369,23 @@ button:hover {
 
 }
 
+.summarize-button {
+  background-color: #ccc;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+  background-color: #33b249;
+  padding: 0.67rem 1rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  display: inline-block;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  box-shadow: none;
+
+}
+
 .nav {
   display: flex;
   justify-content: center;
