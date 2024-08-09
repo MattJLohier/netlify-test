@@ -331,7 +331,7 @@ function App() {
                     <button
                       className="summarize-button"
                       onClick={() => handleSummarize(article)}
-                      disabled={articleValidity[article.title] !== '✅ URL is Valid'}
+                      disabled={articleValidity[article.title] !== '✅ Summarize'}
                     >
                       {articleValidity[article.title] || 'Summarize'}
                     </button>
