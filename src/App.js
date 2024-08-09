@@ -68,7 +68,7 @@ function App() {
         });
 
         console.log('Response data for article:', article.title, response.data);
-        validity[article.title] = response.data.reason || '✅ URL is Valid';
+        validity[article.title] = response.data.reason || '✅ Summarize';
       } catch (error) {
         console.error('Error checking validity for article:', article.title, error);
         validity[article.title] = '❌URL failed to Fetch';
@@ -116,7 +116,7 @@ function App() {
     const articleUrl = getSourceLink(article);
 
     const validityReason = articleValidity[article.title];
-    if (articleUrl === 'NA' || validityReason !== '✅ URL is Valid') {
+    if (articleUrl === 'NA' || validityReason !== '✅ Summarize') {
       console.error('Invalid URL or article is not valid for summarizing:', validityReason);
       return;
     }
@@ -331,7 +331,7 @@ function App() {
                     <button
                       className="summarize-button"
                       onClick={() => handleSummarize(article)}
-                      disabled={articleValidity[article.title] !== '✅ URL is Valid'}
+                      disabled={articleValidity[article.title] !== '✅ Summarize'}
                     >
                       {articleValidity[article.title] || 'Summarize'}
                     </button>
