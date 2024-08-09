@@ -275,7 +275,7 @@ function App() {
                     {summarizedArticle ? (
                       <p>{summarizedArticle}</p>
                     ) : (
-                      <p>No summary available.</p>
+                      <p>Choose an Article to Summarize</p>
                     )}
                   </div>
                 )}
