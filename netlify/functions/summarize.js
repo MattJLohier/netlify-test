@@ -84,7 +84,7 @@ exports.handler = async (event) => {
     }
 
     // Limit the number of words to be sent to the API
-    const wordLimit = 5000; // Set your desired word limit here
+    const wordLimit = 4000; // Set your desired word limit here
     rawText = limitWords(rawText, wordLimit);
     console.log('Text after applying word limit:', rawText.length);
 
@@ -106,7 +106,7 @@ exports.handler = async (event) => {
         const gptResponse = await client.chat.completions.create({
           model: "gpt-4",
           messages: messages,
-          max_tokens: 1000
+          max_tokens: 3000
         });
 
         const result_content = gptResponse.choices[0].message.content;
