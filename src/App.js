@@ -179,9 +179,6 @@ function App() {
 
   return (
     <div className="App">
-      <div className="scroll-progress-container">
-        <div id="scrollProgressBar" className="scroll-progress-bar"></div>
-      </div>
       {loading && (
         <div className="loading-overlay">
           <div className="spinner"></div>
@@ -199,6 +196,10 @@ function App() {
       </div>
       <div className={`main-content ${loading ? 'loading' : ''}`}>
         <div className="nav">
+          {/* Move the scroll-progress-container here */}
+          <div className="scroll-progress-container">
+            <div id="scrollProgressBar" className="scroll-progress-bar"></div>
+          </div>
           <button className={activeTab === 'articles' ? 'active' : ''} onClick={() => setActiveTab('articles')}>Articles</button>
           <button className={activeTab === 'saved' ? 'active' : ''} onClick={() => setActiveTab('saved')}>Saved</button>
           <button className={activeTab === 'summarize' ? 'active' : ''} onClick={() => setActiveTab('summarize')}>Summarize</button>

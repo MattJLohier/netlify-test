@@ -1,7 +1,3 @@
-html {
-  overflow-x: hidden; /* Hide horizontal scrollbar */
-}
-
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -342,31 +338,30 @@ button:hover {
   display: flex;
   justify-content: center;
   background-color: #104378;
-  padding: 1rem 0;     /* Adjust padding to your liking */
-  width: 100%;         /* Full width across the screen */
-  position: sticky;    /* Make the navbar sticky */
-  top: 0;              /* Stick to the top of the page */
-  z-index: 1;          /* Lower z-index to ensure sidebar overlays it */
-  margin: 0;           /* Remove any default margin */
-  box-sizing: border-box; /* Ensure padding is included in width */
-  margin-left: 68px;
+  padding: 1rem 0;
+  width: 100%; /* Full width minus sidebar width */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0; 
+  box-sizing: border-box; 
+  margin-left: 68px; /* Adjust to start after the sidebar */
 }
-
 
 /* Scroll progress bar styling */
 .scroll-progress-container {
-  position: fixed;
-  top: calc(60px); /* Adjust according to navbar height */
+  position: absolute; /* Position within the nav */
+  top: 100%; /* Right at the bottom of the nav */
   left: 0;
-  width: 100%;
+  width: 100%; /* Take the full width of the nav */
   height: 4px;
-  background-color: transparent;
-  z-index: 2; /* Above the navbar but below the sidebar */
+  background-color: #104378;
+  z-index: 2;
 }
 
 .scroll-progress-bar {
   width: 0;
   height: 100%;
-  background-color: #2196f3; /* Color of the progress bar */
+  background-color: #2196f3; /* Progress bar color */
   transition: width 0.1s ease;
 }
