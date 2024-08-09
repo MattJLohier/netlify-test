@@ -305,25 +305,27 @@ button:hover {
   font-weight: bold;
 }
 
-.category-us-company-site {
+/* Specific styles for each category */
+.category-container.category-us-company-site {
   background-color: #007bff;
 }
 
-.category-us-industry-news {
+.category-container.category-us-industry-news {
   background-color: #28a745;
 }
 
-.category-jp-company-site {
+.category-container.category-jp-company-site {
   background-color: #ff0000;
 }
 
-.category-eu-company-site {
+.category-container.category-eu-company-site {
   background-color: #ff9900;
 }
 
-.category-eu-industry-news {
+.category-container.category-eu-industry-news {
   background-color: purple;
 }
+
 
 .summary-textarea {
   width: 98%;

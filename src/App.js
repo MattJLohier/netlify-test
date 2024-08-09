@@ -169,6 +169,25 @@ function App() {
     }
   };
 
+  const getCategoryClassName = (category) => {
+    console.log('Processing category:', category);
+    switch (category) {
+      case 'US Company Site':
+        return 'category-us-company-site';
+      case 'US Industry News':
+        return 'category-us-industry-news';
+      case 'JP Company Site':
+        return 'category-jp-company-site';
+      case 'EU Company Site':
+        return 'category-eu-company-site';
+      case 'EU Industry News':
+        return 'category-eu-industry-news';
+      default:
+        console.warn('Unknown category:', category);
+        return 'category-unknown'; // Consider adding a fallback class
+    }
+  };
+
   if (!user) {
     return <LoginScreen />;
   }
@@ -209,7 +228,7 @@ function App() {
                   <h2>{group.group_title}</h2>
                   {group.articles.map((article, idx) => (
                     <div key={idx} className="blog_post">
-                      <div className="category-container">
+                      <div className={`category-container ${getCategoryClassName(article.category)}`}>
                         {getFlagIcon(article.category) && (
                           <img src={getFlagIcon(article.category)} alt="flag icon" className="category-icon" />
                         )}
@@ -241,7 +260,7 @@ function App() {
               <h1>Saved Articles</h1>
               {savedArticles.map((article, index) => (
                 <div key={index} className="blog_post">
-                  <div className="category-container">
+                  <div className={`category-container ${getCategoryClassName(article.category)}`}>
                     {getFlagIcon(article.category) && (
                       <img src={getFlagIcon(article.category)} alt="flag icon" className="category-icon" />
                     )}
@@ -292,7 +311,7 @@ function App() {
               </div>
               {savedArticles.map((article, index) => (
                 <div key={index} className="blog_post">
-                  <div className="category-container">
+                  <div className={`category-container ${getCategoryClassName(article.category)}`}>
                     {getFlagIcon(article.category) && (
                       <img src={getFlagIcon(article.category)} alt="flag icon" className="category-icon" />
                     )}
