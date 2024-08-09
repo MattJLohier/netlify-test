@@ -274,11 +274,12 @@ function App() {
                     <h2>Summary</h2>
                     {summarizedArticle ? (
                       <textarea
-                        value={summarizedArticle}
-                        onChange={(e) => setSummarizedArticle(e.target.value)}
-                        rows="10"
-                        cols="80"
-                      />
+                      className="summary-textarea"
+                      value={summarizedArticle}
+                      onChange={(e) => setSummarizedArticle(e.target.value)}
+                      rows="10"
+                      cols="80"
+                    />
                     ) : (
                       <p>Choose an Article to Summarize</p>
                     )}

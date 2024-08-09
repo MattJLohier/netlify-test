@@ -300,3 +300,30 @@ button:hover {
 .category-eu-industry-news {
   background-color: purple;
 }
+
+.summary-textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical; /* Allow vertical resize, but not horizontal */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif; /* Use a clean and readable font */
+  background-color: #f9f9f9; /* Light background color for readability */
+}
+
+.summary-textarea:focus {
+  border-color: #007bff; /* Border color on focus */
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Slight shadow on focus */
+}
+
+.summary-section h2 {
+  margin-bottom: 10px;
+}
+
+.summary-section {
+  margin-top: 20px;
+}
