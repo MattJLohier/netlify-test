@@ -196,7 +196,6 @@ function App() {
       </div>
       <div className={`main-content ${loading ? 'loading' : ''}`}>
         <div className="nav">
-          {/* Move the scroll-progress-container here */}
           <div className="scroll-progress-container">
             <div id="scrollProgressBar" className="scroll-progress-bar"></div>
           </div>
@@ -213,32 +212,27 @@ function App() {
                 <div key={index} className="article-group">
                   <h2>{group.group_title}</h2>
                   {group.articles.map((article, idx) => (
-                    <div key={idx} className="article">
-                      <div className="article-header">
-                        <h3>{article.title}</h3>
-                        <div className="article-header-right">
-                          <div className={getCategoryBadgeClass(article.category)}>{article.category}</div>
-                          {getFlagIcon(article.category) && (
-                            <img
-                              src={getFlagIcon(article.category)}
-                              alt={`${article.category} flag`}
-                              className="flag-icon"
-                            />
-                          )}
-                        </div>
+                    <div key={idx} className="blog_post">
+                      <div className="category-container">
+                        {getFlagIcon(article.category) && (
+                          <img src={getFlagIcon(article.category)} alt="flag icon" className="category-icon" />
+                        )}
+                        <div className="category-name">{article.category}</div>
                       </div>
-                      <p>{article.description}</p>
-                      <p><strong>Date:</strong> {article.date}</p>
-                      <p><strong>Source:</strong> {getSourceName(article)}</p>
-                      {getSourceLink(article) !== 'NA' && (
-                        <a className="article-link" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read more</a>
-                      )}
-                      <button
-                        className={savedArticles.some(saved => saved.title === article.title) ? 'unsave-button' : 'save-button'}
-                        onClick={() => saveOrUnsaveArticle(article)}
-                      >
-                        {savedArticles.some(saved => saved.title === article.title) ? 'Unsave' : 'Save'}
-                      </button>
+                      <div className="container_copy">
+                        <h1>{article.title}</h1>
+                        <h3>{article.date}</h3>
+                        <p>{article.description}</p>
+                        {getSourceLink(article) !== 'NA' && (
+                          <a className="btn_primary" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read More</a>
+                        )}
+                        <button
+                          className={savedArticles.some(saved => saved.title === article.title) ? 'unsave-button' : 'save-button'}
+                          onClick={() => saveOrUnsaveArticle(article)}
+                        >
+                          {savedArticles.some(saved => saved.title === article.title) ? 'Unsave' : 'Save'}
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -249,26 +243,19 @@ function App() {
             <div>
               <h1>Saved Articles</h1>
               {savedArticles.map((article, index) => (
-                <div key={index} className="article-group">
-                  <div className="article">
-                    <div className="article-header">
-                      <h3>{article.title}</h3>
-                      <div className="article-header-right">
-                        <div className={getCategoryBadgeClass(article.category)}>{article.category}</div>
-                        {getFlagIcon(article.category) && (
-                          <img
-                            src={getFlagIcon(article.category)}
-                            alt={`${article.category} flag`}
-                            className="flag-icon"
-                          />
-                        )}
-                      </div>
-                    </div>
+                <div key={index} className="blog_post">
+                  <div className="category-container">
+                    {getFlagIcon(article.category) && (
+                      <img src={getFlagIcon(article.category)} alt="flag icon" className="category-icon" />
+                    )}
+                    <div className="category-name">{article.category}</div>
+                  </div>
+                  <div className="container_copy">
+                    <h3>{article.date}</h3>
+                    <h1>{article.title}</h1>
                     <p>{article.description}</p>
-                    <p><strong>Date:</strong> {article.date}</p>
-                    <p><strong>Source:</strong> {getSourceName(article)}</p>
                     {getSourceLink(article) !== 'NA' && (
-                      <a className="article-link" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read more</a>
+                      <a className="btn_primary" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read More</a>
                     )}
                     <button
                       className="unsave-button"
@@ -294,12 +281,12 @@ function App() {
                     <h2>Summary</h2>
                     {summarizedArticle ? (
                       <textarea
-                      className="summary-textarea"
-                      value={summarizedArticle}
-                      onChange={(e) => setSummarizedArticle(e.target.value)}
-                      rows="10"
-                      cols="80"
-                    />
+                        className="summary-textarea"
+                        value={summarizedArticle}
+                        onChange={(e) => setSummarizedArticle(e.target.value)}
+                        rows="10"
+                        cols="80"
+                      />
                     ) : (
                       <p>Choose an Article to Summarize</p>
                     )}
@@ -307,33 +294,26 @@ function App() {
                 )}
               </div>
               {savedArticles.map((article, index) => (
-                <div key={index} className="article-group">
-                  <div className="article">
-                    <div className="article-header">
-                      <h3>{article.title}</h3>
-                      <div className="article-header-right">
-                        <div className={getCategoryBadgeClass(article.category)}>{article.category}</div>
-                        {getFlagIcon(article.category) && (
-                          <img
-                            src={getFlagIcon(article.category)}
-                            alt={`${article.category} flag`}
-                            className="flag-icon"
-                          />
-                        )}
-                      </div>
-                    </div>
+                <div key={index} className="blog_post">
+                  <div className="category-container">
+                    {getFlagIcon(article.category) && (
+                      <img src={getFlagIcon(article.category)} alt="flag icon" className="category-icon" />
+                    )}
+                    <div className="category-name">{article.category}</div>
+                  </div>
+                  <div className="container_copy">
+                    <h3>{article.date}</h3>
+                    <h1>{article.title}</h1>
                     <p>{article.description}</p>
-                    <p><strong>Date:</strong> {article.date}</p>
-                    <p><strong>Source:</strong> {getSourceName(article)}</p>
                     {getSourceLink(article) !== 'NA' && (
-                      <a className="article-link" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read more</a>
+                      <a className="btn_primary" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read More</a>
                     )}
                     <button
                       className="summarize-button"
                       onClick={() => handleSummarize(article)}
                       disabled={articleValidity[article.title] !== '✅ Summarize'}
                     >
-                      {articleValidity[article.title] || 'Summarize'}
+                      Summarize
                     </button>
                   </div>
                 </div>

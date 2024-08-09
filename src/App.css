@@ -355,6 +355,18 @@ button:hover {
 .summarize-button[disabled] {
   background-color: #ccc;
   cursor: not-allowed;
+  color: white;
+  text-decoration: none;
+  background-color: lightgrey;
+  padding: 0.67rem 1rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  display: inline-block;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  box-shadow: none;
+
 }
 
 .nav {
@@ -387,4 +399,149 @@ button:hover {
   height: 100%;
   background-color: #2196f3; /* Progress bar color */
   transition: width 0.1s ease;
+}
+
+/* Article Card Styles */
+.blog_post {
+  background: #fff;
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.3);
+  position: relative;
+  margin-bottom: 3rem; /* Add some margin for spacing between articles */
+}
+
+.container_copy {
+  padding: 6rem 4rem 3rem 4rem;
+}
+
+
+/* New styles for category name with icon */
+.category-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 290px; /* Adjust as needed */
+  height: 60px; /* Adjust as needed */
+  border-radius: 7px;
+  position: absolute;
+  background-color: #104378;
+  left: -2%;
+  top: -5%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.category-container .category-icon {
+  margin-right: 8px; /* Space between icon and text */
+  font-size: 1.5rem; /* Adjust icon size */
+  width: 50px;
+}
+
+.category-container .category-name {
+  font-size: 1.2rem; /* Adjust text size */
+}
+
+
+/* Title and Date Styling */
+h3 {
+  margin: 0 0 0.5rem 0;
+  color: #999;
+  font-size: 1.25rem;
+  text-align: left;
+}
+
+h1 {
+  margin: 0 0 1rem 0;
+  font-size: 2.2rem;
+  letter-spacing: 0.5px;
+  color: #333;
+  text-align: left;
+}
+
+h2 {
+  margin: 0 0 2rem 0;
+  font-size: 2.5rem;
+  letter-spacing: 0.5px;
+  color: #333;
+  text-align: center;
+}
+
+/* Article Description */
+p {
+  margin: 0 0 4.5rem 0;
+  font-size: 1.5rem;
+  line-height: 1.45;
+  color: #333;
+  text-align: left;
+}
+
+/* Button Styling */
+.btn_primary {
+  color: white;
+  text-decoration: none;
+  background-color: #33b249;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  display: inline-block;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.btn_primary:hover {
+  box-shadow: 0px 5px 1rem rgba(255, 94, 98, 0.5);
+}
+
+
+.article a.article-link.unsave-button, .article button.unsave-button {
+  background-color: red;
+  color: white;
+  text-decoration: none;
+  padding: 0.67rem 1rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  display: inline-block;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.unsave-button { 
+  background-color: red;
+  color: white;
+  text-decoration: none;
+  padding: 0.67rem 1rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  display: inline-block;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.save-button {
+
+  background-color: #2196f3;
+  color: white;
+  text-decoration: none;
+  padding: 0.67rem 1rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  display: inline-block;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  box-shadow: none;
+
 }
