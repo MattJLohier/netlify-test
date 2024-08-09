@@ -11,7 +11,7 @@ function App() {
   const [articleGroups, setArticleGroups] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
   const [activeTab, setActiveTab] = useState('articles');
-  const [summarizedArticle, setSummarizedArticle] = useState(null);
+  const [summarizedArticle, setSummarizedArticle] = useState('');
   const [articleValidity, setArticleValidity] = useState({});
   const [loading, setLoading] = useState(false);
   const [summaryLoading, setSummaryLoading] = useState(false);
@@ -273,7 +273,12 @@ function App() {
                   <div>
                     <h2>Summary</h2>
                     {summarizedArticle ? (
-                      <p>{summarizedArticle}</p>
+                      <textarea
+                        value={summarizedArticle}
+                        onChange={(e) => setSummarizedArticle(e.target.value)}
+                        rows="10"
+                        cols="80"
+                      />
                     ) : (
                       <p>Choose an Article to Summarize</p>
                     )}
