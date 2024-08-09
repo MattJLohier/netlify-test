@@ -366,6 +366,8 @@ button:hover {
   border: none;
   outline: none;
   box-shadow: none;
+  font-family: 'Poppins', sans-serif;
+
 
 }
 
@@ -374,7 +376,7 @@ button:hover {
   cursor: pointer;
   color: white;
   text-decoration: none;
-  background-color: #33b249;
+  background-color: #2196f3;
   padding: 0.67rem 1rem;
   border-radius: 4px;
   margin-right: 0.5rem;
@@ -383,6 +385,8 @@ button:hover {
   border: none;
   outline: none;
   box-shadow: none;
+  font-family: 'Poppins', sans-serif;
+
 
 }
 
@@ -509,6 +513,8 @@ p {
   border: none;
   outline: none;
   box-shadow: none;
+  font-family: 'Poppins', sans-serif;
+
 }
 
 .btn_primary:hover {
@@ -529,6 +535,8 @@ p {
   border: none;
   outline: none;
   box-shadow: none;
+  font-family: 'Poppins', sans-serif;
+
 }
 
 .unsave-button { 
@@ -544,6 +552,8 @@ p {
   border: none;
   outline: none;
   box-shadow: none;
+  font-family: 'Poppins', sans-serif;
+
 }
 
 .save-button {
