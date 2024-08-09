@@ -159,11 +159,11 @@ function App() {
 
   const getFlagIcon = (category) => {
     if (category.includes('JP')) {
-      return '/jp-flag.svg';
+      return '/japan-flag.jpg';
     } else if (category.includes('US')) {
-      return '/us-flag.svg';
+      return '/us-flag.jpg';
     } else if (category.includes('EU')) {
-      return '/eu-flag.svg';
+      return '/europe-flag.jpg';
     } else {
       return null;
     }
@@ -257,7 +257,7 @@ function App() {
           )}
           {activeTab === 'saved' && (
             <div>
-              <h1>Saved Articles</h1>
+              <h1 style={{ margin: '0 0 3rem 0' }}>Saved Articles</h1>
               {savedArticles.map((article, index) => (
                 <div key={index} className="blog_post">
                   <div className={`category-container ${getCategoryClassName(article.category)}`}>
