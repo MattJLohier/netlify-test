@@ -3,8 +3,8 @@ import axios from 'axios';
 import netlifyIdentity from 'netlify-identity-widget';
 import { fetchArticles } from './fetchArticles';
 import './App.css';
-import logo from './images/logo.png'; // Update the path to the logo image
-import LoginScreen from './LoginScreen'; // Import the new LoginScreen component
+import logo from './images/logo.png'; 
+import LoginScreen from './LoginScreen'; 
 
 function App() {
   const [user, setUser] = useState(null);
@@ -42,7 +42,7 @@ function App() {
     };
 
     loadArticles();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   const checkArticleValidity = useCallback(async () => {
     setLoading(true);
@@ -51,7 +51,7 @@ function App() {
     for (const article of savedArticles) {
       const articleUrl = getSourceLink(article);
 
-      console.log('Checking validity for article:', article); // Log the article object
+      console.log('Checking validity for article:', article);
 
       try {
         const payload = {
@@ -59,7 +59,7 @@ function App() {
           action: 'check',
         };
 
-        console.log('Sending payload for validity check:', payload); // Log the payload
+        console.log('Sending payload for validity check:', payload);
 
         const response = await axios.post('/.netlify/functions/summarize', payload, {
           headers: {
@@ -68,7 +68,7 @@ function App() {
         });
 
         console.log('Response data for article:', article.title, response.data);
-        validity[article.title] = response.data.reason || '✅ URL is Valid'; // Store the reason if invalid
+        validity[article.title] = response.data.reason || '✅ URL is Valid';
       } catch (error) {
         console.error('Error checking validity for article:', article.title, error);
         validity[article.title] = '❌URL failed to Fetch';
@@ -84,6 +84,21 @@ function App() {
       checkArticleValidity();
     }
   }, [activeTab, checkArticleValidity]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const winScroll =
+        document.body.scrollTop || document.documentElement.scrollTop;
+      const height =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('scrollProgressBar').style.width = scrolled + '%';
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const saveOrUnsaveArticle = (article) => {
     if (savedArticles.some(saved => saved.title === article.title)) {
@@ -113,7 +128,7 @@ function App() {
       action: 'summarize',
     };
 
-    console.log('Sending payload:', payload); // Log the payload to check its content
+    console.log('Sending payload:', payload);
 
     try {
       const response = await axios.post('/.netlify/functions/summarize', payload, {
@@ -164,6 +179,9 @@ function App() {
 
   return (
     <div className="App">
+      <div className="scroll-progress-container">
+        <div id="scrollProgressBar" className="scroll-progress-bar"></div>
+      </div>
       {loading && (
         <div className="loading-overlay">
           <div className="spinner"></div>
@@ -312,7 +330,7 @@ function App() {
                     <button
                       className="summarize-button"
                       onClick={() => handleSummarize(article)}
-                      disabled={articleValidity[article.title] !== 'Summarize'}
+                      disabled={articleValidity[article.title] !== '✅ URL is Valid'}
                     >
                       {articleValidity[article.title] || 'Summarize'}
                     </button>
