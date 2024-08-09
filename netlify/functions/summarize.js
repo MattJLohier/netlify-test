@@ -84,7 +84,7 @@ exports.handler = async (event) => {
     }
 
     // Limit the number of words to be sent to the API
-    const wordLimit = 500; // Set your desired word limit here
+    const wordLimit = 2000; // Set your desired word limit here
     rawText = limitWords(rawText, wordLimit);
     console.log('Text after applying word limit:', rawText.length);
 
