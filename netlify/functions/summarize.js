@@ -100,7 +100,7 @@ exports.handler = async (event) => {
     if (action === 'check') {
       return {
         statusCode: 200,
-        body: JSON.stringify({ valid: true, reason: '✅ URL is Valid' }),
+        body: JSON.stringify({ valid: true, reason: '✅ Summarize' }),
       };
     } else if (action === 'summarize') {
       const input_message = `Please summarize the following news article: ${rawText}`;
