@@ -351,6 +351,7 @@ button:hover {
 
 .summary-section {
   margin-top: 20px;
+  margin-bottom: 3em;
 }
 
 .summarize-button[disabled] {
