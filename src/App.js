@@ -304,7 +304,7 @@ function App() {
                         cols="80"
                       />
                     ) : (
-                      <p>Choose an Article to Summarize</p>
+                      <p>Choose an Article to Summarize (Make sure you save one first) </p>
                     )}
                   </div>
                 )}
