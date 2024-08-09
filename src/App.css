@@ -1,9 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f5f5f5;
   overflow-x: hidden; /* Hide horizontal scrollbar */
+  font-family: 'Poppins', sans-serif;
 
 }
 
@@ -50,14 +54,21 @@ body {
 .nav button {
   background: none;
   border: none;
-  color: white;
+  color: #104378;
+  padding: 8px 15px 8px 15px;
+  border-radius: 5px;
   font-size: 1.2rem;
   margin: 0 1rem;
   cursor: pointer;
+  background-color: white;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+
 }
 
 .nav button.active {
-  border-bottom: 2px solid white;
+  background-color: #2196f3; /* Progress bar color */
+  color: white;
 }
 
 .content {
