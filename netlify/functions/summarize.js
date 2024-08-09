@@ -4,12 +4,20 @@ const OpenAI = require('openai');
 
 const client = new OpenAI({
   api_key: process.env.OPENAI_API_KEY,
-  
 });
 
 const isVideoPlatform = (url) => {
   const videoPlatforms = ['youtube', 'youtu.be', 'vimeo', 'dailymotion'];
   return videoPlatforms.some(platform => url.includes(platform));
+};
+
+// Helper function to limit the number of words
+const limitWords = (text, limit) => {
+  const words = text.split(' ');
+  if (words.length > limit) {
+    return words.slice(0, limit).join(' ');
+  }
+  return text;
 };
 
 exports.handler = async (event) => {
@@ -56,7 +64,7 @@ exports.handler = async (event) => {
     const $ = cheerio.load(html);
 
     // Extract the raw text content from the page
-    const rawText = $('body').text().trim();
+    let rawText = $('body').text().trim();
     console.log('Extracted raw text length:', rawText.length);
 
     if (!rawText) {
@@ -66,6 +74,11 @@ exports.handler = async (event) => {
         body: JSON.stringify({ valid: false, reason: 'Could not extract text content from the URL' }),
       };
     }
+
+    // Limit the number of words to be sent to the API
+    const wordLimit = 500; // Set your desired word limit here
+    rawText = limitWords(rawText, wordLimit);
+    console.log('Text after applying word limit:', rawText.length);
 
     if (action === 'check') {
       return {
