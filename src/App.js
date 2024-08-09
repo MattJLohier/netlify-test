@@ -157,10 +157,6 @@ function App() {
     return article.sourceName || article.source_name || 'Unknown Source';
   };
 
-  const getCategoryBadgeClass = (category) => {
-    return `category-badge category-${category.toLowerCase().replace(/\s+/g, '-')}`;
-  };
-
   const getFlagIcon = (category) => {
     if (category.includes('JP')) {
       return '/jp-flag.svg';
@@ -223,6 +219,7 @@ function App() {
                         <h1>{article.title}</h1>
                         <h3>{article.date}</h3>
                         <p>{article.description}</p>
+                        <p><strong>Source:</strong> {getSourceName(article)}</p>
                         {getSourceLink(article) !== 'NA' && (
                           <a className="btn_primary" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read More</a>
                         )}
