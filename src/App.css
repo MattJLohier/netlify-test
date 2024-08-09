@@ -434,7 +434,7 @@ button:hover {
 }
 
 .container_copy {
-  padding: 6rem 4rem 3rem 4rem;
+  padding: 5rem 4rem 3rem 4rem;
 }
 
 
@@ -493,7 +493,7 @@ h2 {
 
 /* Article Description */
 p {
-  margin: 0 0 4.5rem 0;
+  margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
   line-height: 1.45;
   color: #333;
