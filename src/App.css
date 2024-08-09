@@ -327,3 +327,8 @@ button:hover {
 .summary-section {
   margin-top: 20px;
 }
+
+.summarize-button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
