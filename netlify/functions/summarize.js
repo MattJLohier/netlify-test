@@ -20,6 +20,14 @@ const limitWords = (text, limit) => {
   return text;
 };
 
+// Helper function to clean and extract meaningful text
+const extractMeaningfulText = ($) => {
+  $('script, style, noscript, iframe').remove(); // Remove non-text elements
+  const paragraphs = $('p').map((i, el) => $(el).text().trim()).get(); // Extract text from paragraphs
+  const headings = $('h1, h2, h3, h4, h5, h6').map((i, el) => $(el).text().trim()).get(); // Extract text from headings
+  return [...headings, ...paragraphs].join(' ').replace(/\s\s+/g, ' ').trim(); // Join and clean up the text
+};
+
 exports.handler = async (event) => {
   let requestBody;
   try {
@@ -63,15 +71,15 @@ exports.handler = async (event) => {
     console.log('Parsing HTML content');
     const $ = cheerio.load(html);
 
-    // Extract the raw text content from the page
-    let rawText = $('body').text().trim();
+    // Extract meaningful text content from the page
+    let rawText = extractMeaningfulText($);
     console.log('Extracted raw text length:', rawText.length);
 
     if (!rawText) {
-      console.error('Could not extract text content from the URL');
+      console.error('Could not extract meaningful text content from the URL');
       return {
         statusCode: 200,
-        body: JSON.stringify({ valid: false, reason: 'Could not extract text content from the URL' }),
+        body: JSON.stringify({ valid: false, reason: 'Could not extract meaningful text content from the URL' }),
       };
     }
 
