@@ -64,6 +64,8 @@ body {
 .content {
   padding: 2rem;
   margin-left: 100px;
+  padding-top: 2rem; /* Adjust the padding as needed */
+
 }
 
 .article-group {
@@ -331,4 +333,15 @@ button:hover {
 .summarize-button[disabled] {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  background-color: #104378;
+  padding: 1rem;
+  margin-left: 100px;
+  position: sticky;  /* Make the navbar sticky */
+  top: 0;            /* Stick to the top of the page */
+  z-index: 100;      /* Ensure the navbar stays above other content */
 }
