@@ -68,10 +68,10 @@ function App() {
         });
 
         console.log('Response data for article:', article.title, response.data);
-        validity[article.title] = response.data.valid;
+        validity[article.title] = response.data.reason || '✅ URL is Valid'; // Store the reason if invalid
       } catch (error) {
         console.error('Error checking validity for article:', article.title, error);
-        validity[article.title] = false;
+        validity[article.title] = '❌URL failed to Fetch';
       }
     }
 
@@ -100,8 +100,9 @@ function App() {
   const handleSummarize = async (article) => {
     const articleUrl = getSourceLink(article);
 
-    if (articleUrl === 'NA' || !articleValidity[article.title]) {
-      console.error('Invalid URL or article is not valid for summarizing');
+    const validityReason = articleValidity[article.title];
+    if (articleUrl === 'NA' || validityReason !== '✅ URL is Valid') {
+      console.error('Invalid URL or article is not valid for summarizing:', validityReason);
       return;
     }
 
@@ -308,19 +309,13 @@ function App() {
                     {getSourceLink(article) !== 'NA' && (
                       <a className="article-link" href={getSourceLink(article)} target="_blank" rel="noopener noreferrer">Read more</a>
                     )}
-                    {article.link !== 'NA' ? (
-                      <button
-                        className="summarize-button"
-                        onClick={() => handleSummarize(article)}
-                        disabled={!articleValidity[article.title]}
-                      >
-                        Summarize
-                      </button>
-                    ) : (
-                      <button className="summarize-button" disabled>
-                        Summarize
-                      </button>
-                    )}
+                    <button
+                      className="summarize-button"
+                      onClick={() => handleSummarize(article)}
+                      disabled={articleValidity[article.title] !== '✅ URL is Valid'}
+                    >
+                      {articleValidity[article.title] || 'Summarize'}
+                    </button>
                   </div>
                 </div>
               ))}

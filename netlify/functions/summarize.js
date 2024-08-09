@@ -57,7 +57,7 @@ exports.handler = async (event) => {
     console.error('Video content is not supported:', url);
     return {
       statusCode: 200,
-      body: JSON.stringify({ valid: false, reason: 'Video content is not supported' }),
+      body: JSON.stringify({ valid: false, reason: '❌URL is a Video' }),
     };
   }
 
@@ -66,7 +66,7 @@ exports.handler = async (event) => {
     console.error('PDF content is not supported:', url);
     return {
       statusCode: 200,
-      body: JSON.stringify({ valid: false, reason: 'PDF content is not supported' }),
+      body: JSON.stringify({ valid: false, reason: '❌URL is a PDF' }),
     };
   }
 
@@ -88,7 +88,7 @@ exports.handler = async (event) => {
       console.error('Could not extract meaningful text content from the URL');
       return {
         statusCode: 200,
-        body: JSON.stringify({ valid: false, reason: 'Could not extract meaningful text content from the URL' }),
+        body: JSON.stringify({ valid: false, reason: '❌URL failed to Fetch' }),
       };
     }
 
@@ -100,7 +100,7 @@ exports.handler = async (event) => {
     if (action === 'check') {
       return {
         statusCode: 200,
-        body: JSON.stringify({ valid: true }),
+        body: JSON.stringify({ valid: true, reason: '✅ URL is Valid' }),
       };
     } else if (action === 'summarize') {
       const input_message = `Please summarize the following news article: ${rawText}`;
